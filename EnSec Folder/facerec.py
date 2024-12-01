@@ -43,9 +43,9 @@ def read_images(path, sz=None):
 
 def face_rec():
   # Replace with actual names corresponding to your folder names
-  names = ["Renz", "Dalena", "Ivan"]
+  names = ["Renz", "Dalena Student 2212328  ", "Alegre Student 2210299"]
 
-  image_path = sys.argv[1] if len(sys.argv) > 1 else 'D:/Docs/J/EnSec Folder/dataset'
+  image_path = sys.argv[1] if len(sys.argv) > 1 else 'D:/Docs/J/EnSec Folder/dataset' # Specify the path to your dataset (For redundancy)
 
   if not os.path.exists(image_path):
     print(f"Error: Image path '{image_path}' does not exist.")
@@ -64,7 +64,7 @@ def face_rec():
   while True:
     ret, img = camera.read()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.detectMultiScale(gray, 1.1, 5)
+    faces = face_cascade.detectMultiScale(gray, 1.2, 2)
 
     for (x, y, w, h) in faces:
       cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
@@ -74,16 +74,15 @@ def face_rec():
       label, confidence = model.predict(roi)
 
       # Set a threshold for confidence
-      threshold = 80
+      threshold = 70
 
-
-      if confidence < threshold:
-        if 0 <= label < len(names):
-            name = names[label]
-            cv2.putText(img, f"{name} ({confidence:.2f})", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
-        else:
-            print(f"Warning: Predicted label {label} is out of range.")
-            cv2.putText(img, "Unknown", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+      #decides if the person is an intruder
+      if confidence < threshold and 0 <= label < len(names):
+        name = names[label]
+        cv2.putText(img, f"{name}", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+      else:
+        # Output "Unknown" for high confidence values or out-of-bounds labels
+        cv2.putText(img, "Not Registered", (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
 
     cv2.imshow('Video', img)  
